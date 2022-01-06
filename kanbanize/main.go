@@ -6,16 +6,27 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 
-	const (
-		boardid   = "YOUR_BOARD_ID"
-		apikey    = "YOUR_API_KEY"
-		subdomain = "YOUR_SUBDOMAIN"
-		format    = "json" // json, csv, xml
-	)
+	boardid, ok := os.LookupEnv("KANBAN_BOARDID")
+	if !ok {
+		log.Fatal("KANBAN_BOARDID not set")
+	}
+
+	apikey, ok := os.LookupEnv("KANBAN_APIKEY")
+	if !ok {
+		log.Fatal("KANBAN_APIKEY not set")
+	}
+
+	subdomain, ok := os.LookupEnv("KANBAN_SUBDOMAIN")
+	if !ok {
+		log.Fatal("KANBAN_SUBDOMAIN not set")
+	}
+
+	format := "json" // json, csv, xml
 
 	url := fmt.Sprintf("https://%s.kanbanize.com/index.php/api/kanbanize/get_all_tasks/format/%s", subdomain, format)
 
@@ -38,6 +49,6 @@ func main() {
 		log.Fatalf("unable to read response body, %v", err)
 	}
 
-	log.Printf("%s", body)
+	fmt.Printf("%s", body)
 
 }
