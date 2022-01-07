@@ -152,4 +152,43 @@ func main() {
 		fmt.Printf("id: %d, position: %d, size: %d, column: %s, lane: %s\n", t.id, t.position, t.size, t.columnname, t.lanename)
 	}
 
+	type gantt struct {
+		taskID int
+		line   int // increase for each task
+		day    int // when the task starts
+	}
+
+	g := []gantt{}
+	taskCount := 0
+	maxSimultaneousTask := 3
+	line := 0
+	startDay := 0
+	greatestTaskSize := 0
+
+	for _, t := range tasks {
+		if taskCount >= maxSimultaneousTask {
+			taskCount = 0
+			startDay += greatestTaskSize
+			greatestTaskSize = 0
+		}
+
+		g = append(g, gantt{
+			taskID: t.id,
+			line:   line,
+			day:    startDay,
+		})
+
+		if greatestTaskSize < t.size {
+			greatestTaskSize = t.size
+		}
+
+		taskCount++
+		line++
+	}
+
+	// List result
+	for _, gt := range g {
+		fmt.Printf("id: %d, line: %d, day: %d\n", gt.taskID, gt.line, gt.day)
+	}
+
 }
