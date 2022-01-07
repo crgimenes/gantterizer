@@ -154,6 +154,7 @@ func main() {
 
 	type gantt struct {
 		taskID int
+		size   int
 		line   int // increase for each task
 		day    int // when the task starts
 	}
@@ -174,6 +175,7 @@ func main() {
 
 		g = append(g, gantt{
 			taskID: t.id,
+			size:   t.size,
 			line:   line,
 			day:    startDay,
 		})
@@ -188,7 +190,9 @@ func main() {
 
 	// List result
 	for _, gt := range g {
-		fmt.Printf("id: %d, line: %d, day: %d\n", gt.taskID, gt.line, gt.day)
+		taskChart := strings.Repeat("#", gt.size*4)
+		taskSpace := strings.Repeat(" ", gt.day*4)
+		fmt.Printf("%s %s %d\n", taskSpace, taskChart, gt.taskID)
 	}
 
 }
