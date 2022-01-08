@@ -14,13 +14,13 @@ import (
 )
 
 type task struct {
-	id           int
+	ID           int `json:"id"`
 	position     int
-	size         int
-	workflowname string
-	columnname   string
-	lanename     string
-	title        string
+	Size         int    `json:"size"`
+	WorkflowName string `json:"workflowname"`
+	ColumnName   string `json:"columnname"`
+	LaneName     string `json:"lanename"`
+	Title        string `json:"title"`
 }
 
 func main() {
@@ -121,19 +121,19 @@ func main() {
 		title := tm["title"].(string)
 
 		t := task{
-			id:           taskid,
+			ID:           taskid,
 			position:     position,
-			size:         size,
-			workflowname: workflowname,
-			columnname:   columnname,
-			lanename:     lanename,
-			title:        title,
+			Size:         size,
+			WorkflowName: workflowname,
+			ColumnName:   columnname,
+			LaneName:     lanename,
+			Title:        title,
 		}
 
 		tasks = append(tasks, t)
 
 		fmt.Printf("id: %d, position: %d, size: %d, workflowname: %s, columnname: %s, lanename: %s\n",
-			t.id, t.position, t.size, t.workflowname, t.columnname, t.lanename)
+			t.ID, t.position, t.Size, t.WorkflowName, t.ColumnName, t.LaneName)
 
 	}
 
@@ -151,15 +151,15 @@ func main() {
 	sort.Slice(tasks, func(i, j int) bool {
 		for k := range column {
 
-			if tasks[i].columnname == column[k] && tasks[j].columnname == column[k] {
+			if tasks[i].ColumnName == column[k] && tasks[j].ColumnName == column[k] {
 				return tasks[i].position < tasks[j].position
 			}
 
-			if tasks[i].columnname == column[k] {
+			if tasks[i].ColumnName == column[k] {
 				return true
 			}
 
-			if tasks[j].columnname == column[k] {
+			if tasks[j].ColumnName == column[k] {
 				return false
 			}
 
@@ -170,7 +170,7 @@ func main() {
 
 	// List result
 	for i, t := range tasks {
-		fmt.Printf("i:%2d │ id: %6d │ column: %-17q │ position: %d\n", i, t.id, t.columnname, t.position)
+		fmt.Printf("i:%2d │ id: %6d │ column: %-17q │ position: %d\n", i, t.ID, t.ColumnName, t.position)
 	}
 
 	type gantt struct {
@@ -196,15 +196,15 @@ func main() {
 		}
 
 		g = append(g, gantt{
-			taskID: t.id,
-			size:   t.size,
+			taskID: t.ID,
+			size:   t.Size,
 			line:   line,
 			day:    startDay,
-			title:  t.title,
+			title:  t.Title,
 		})
 
-		if greatestTaskSize < t.size {
-			greatestTaskSize = t.size
+		if greatestTaskSize < t.Size {
+			greatestTaskSize = t.Size
 		}
 
 		taskCount++
