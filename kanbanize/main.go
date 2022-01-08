@@ -40,6 +40,9 @@ func main() {
 		log.Fatal("KANBAN_SUBDOMAIN not set")
 	}
 
+	workflow := os.Getenv("KANBAN_WORKFLOW")
+	lane := os.Getenv("KANBAN_LANE")
+
 	format := "json" // json, csv, xml
 
 	url := fmt.Sprintf("https://%s.kanbanize.com/index.php/api/kanbanize/get_all_tasks/format/%s", subdomain, format)
@@ -73,12 +76,12 @@ func main() {
 	for _, tm := range m {
 
 		// get only cards fron the lane default
-		if tm["lanename"] != "Default" {
+		if lane != "" && lane != tm["lanename"] {
 			continue
 		}
 
 		// get only cards fron workflow "Tasks"
-		if tm["workflow_name"] != "Tasks" {
+		if workflow != "" && workflow != tm["workflow_name"] {
 			continue
 		}
 
