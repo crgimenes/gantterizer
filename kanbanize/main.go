@@ -20,6 +20,7 @@ type task struct {
 	workflowname string
 	columnname   string
 	lanename     string
+	title        string
 }
 
 func main() {
@@ -116,6 +117,9 @@ func main() {
 		// workflowname
 		workflowname := tm["workflow_name"].(string)
 
+		// title
+		title := tm["title"].(string)
+
 		t := task{
 			id:           taskid,
 			position:     position,
@@ -123,13 +127,17 @@ func main() {
 			workflowname: workflowname,
 			columnname:   columnname,
 			lanename:     lanename,
+			title:        title,
 		}
 
 		tasks = append(tasks, t)
-		// fmt.Println(tm["taskid"], tm["workflow_name"])
+
+		fmt.Printf("id: %d, position: %d, size: %d, workflowname: %s, columnname: %s, lanename: %s\n",
+			t.id, t.position, t.size, t.workflowname, t.columnname, t.lanename)
+
 	}
 
-	columnOrder := []string{
+	column := []string{
 		"Backlog",
 		"Requested",
 		"Doing",
@@ -139,17 +147,30 @@ func main() {
 		"Production / Done",
 	}
 
-	// sort tasks by columnOrder and position
+	// sort tasks as in column array
 	sort.Slice(tasks, func(i, j int) bool {
-		if tasks[i].columnname == tasks[j].columnname {
-			return tasks[i].position < tasks[j].position
+		for k := range column {
+
+			if tasks[i].columnname == column[k] && tasks[j].columnname == column[k] {
+				return tasks[i].position < tasks[j].position
+			}
+
+			if tasks[i].columnname == column[k] {
+				return true
+			}
+
+			if tasks[j].columnname == column[k] {
+				return false
+			}
+
 		}
-		return sort.SearchStrings(columnOrder, tasks[i].columnname) < sort.SearchStrings(columnOrder, tasks[j].columnname)
+
+		return false
 	})
 
 	// List result
-	for _, t := range tasks {
-		fmt.Printf("id: %d, position: %d, size: %d, column: %s, lane: %s\n", t.id, t.position, t.size, t.columnname, t.lanename)
+	for i, t := range tasks {
+		fmt.Printf("i:%2d │ id: %6d │ column: %-17q │ position: %d\n", i, t.id, t.columnname, t.position)
 	}
 
 	type gantt struct {
@@ -157,6 +178,7 @@ func main() {
 		size   int
 		line   int // increase for each task
 		day    int // when the task starts
+		title  string
 	}
 
 	g := []gantt{}
@@ -178,6 +200,7 @@ func main() {
 			size:   t.size,
 			line:   line,
 			day:    startDay,
+			title:  t.title,
 		})
 
 		if greatestTaskSize < t.size {
